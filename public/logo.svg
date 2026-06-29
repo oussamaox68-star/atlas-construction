@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="Atlas Construction Group">
+  <defs>
+    <linearGradient id="acg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="24" fill="url(#acg-gradient)"/>
+  <path d="M60 22L88 38V74L60 90L32 74V38L60 22Z" stroke="white" stroke-width="2.5" stroke-linejoin="round" fill="none" opacity="0.35"/>
+  <text x="60" y="68" text-anchor="middle" fill="white" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="28" font-weight="700" letter-spacing="1">ACG</text>
+</svg>

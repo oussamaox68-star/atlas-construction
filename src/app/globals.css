@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --shadow-soft: 0 4px 24px -4px rgb(15 23 42 / 0.08);
+  --shadow-card: 0 8px 32px -8px rgb(15 23 42 / 0.12);
+  --shadow-elevated: 0 20px 48px -12px rgb(15 23 42 / 0.18);
+  --shadow-glow-amber: 0 12px 40px -8px rgb(245 158 11 / 0.35);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  @apply bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100;
+  font-feature-settings: "kern" 1, "liga" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  @apply tracking-tight;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+.shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+.shadow-elevated {
+  box-shadow: var(--shadow-elevated);
+}
+
+.shadow-glow-amber {
+  box-shadow: var(--shadow-glow-amber);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
