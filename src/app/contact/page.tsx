@@ -21,8 +21,75 @@ import { COMPANY } from "@/lib/company"
 import { IMAGES } from "@/lib/images"
 
 export default function Contact() {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = React.useState(false)
+  const [statusMessage, setStatusMessage] = React.useState("")
+  const [statusType, setStatusType] = React.useState<"success" | "error" | "">("")
+  const formRef = React.useRef<HTMLFormElement>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!formRef.current) return
+
+    const formData = new FormData(formRef.current)
+    const firstName = formData.get("first-name") as string
+    const lastName = formData.get("last-name") as string
+    const email = formData.get("email") as string
+    const message = formData.get("message") as string
+
+    // Validation
+    if (!firstName || !lastName) {
+      setStatusMessage("Name is required.")
+      setStatusType("error")
+      return
+    }
+
+    if (!email) {
+      setStatusMessage("Email is required.")
+      setStatusType("error")
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setStatusMessage("Please enter a valid email address.")
+      setStatusType("error")
+      return
+    }
+
+    if (!message) {
+      setStatusMessage("Message is required.")
+      setStatusType("error")
+      return
+    }
+
+    setIsSubmitting(true)
+    setStatusMessage("")
+    setStatusType("")
+
+    try {
+      const response = await fetch("https://formspree.io/f/mwvdnrbn", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      })
+
+      if (response.ok) {
+        setStatusMessage("Your message has been sent successfully.")
+        setStatusType("success")
+        formRef.current.reset()
+      } else {
+        setStatusMessage("Something went wrong. Please try again.")
+        setStatusType("error")
+      }
+    } catch (error) {
+      setStatusMessage("Something went wrong. Please try again.")
+      setStatusType("error")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -55,7 +122,7 @@ export default function Contact() {
               Send Us a Message
             </h2>
             <Card className="p-7 lg:p-8 shadow-card">
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label htmlFor="first-name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -63,6 +130,7 @@ export default function Contact() {
                     </label>
                     <input
                       id="first-name"
+                      name="first-name"
                       type="text"
                       required
                       className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
@@ -75,6 +143,7 @@ export default function Contact() {
                     </label>
                     <input
                       id="last-name"
+                      name="last-name"
                       type="text"
                       required
                       className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
@@ -88,6 +157,7 @@ export default function Contact() {
                   </label>
                   <input
                     id="email"
+                    name="email"
                     type="email"
                     required
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
@@ -100,6 +170,7 @@ export default function Contact() {
                   </label>
                   <input
                     id="phone"
+                    name="phone"
                     type="tel"
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                     placeholder={COMPANY.phone}
@@ -111,6 +182,7 @@ export default function Contact() {
                   </label>
                   <select
                     id="service"
+                    name="service"
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                   >
                     <option value="">Select a service</option>
@@ -128,15 +200,25 @@ export default function Contact() {
                   </label>
                   <textarea
                     id="message"
+                    name="message"
                     rows={5}
                     required
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all resize-none"
                     placeholder="Tell us about your project..."
                   />
                 </div>
-                <Button type="submit" size="lg" className="w-full">
+                {statusMessage && (
+                  <div className={`p-4 rounded-xl ${
+                    statusType === "success" 
+                      ? "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800" 
+                      : "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-800"
+                  }`}>
+                    {statusMessage}
+                  </div>
+                )}
+                <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
                   <Send className="h-5 w-5" />
-                  Send Message
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
               </form>
             </Card>
